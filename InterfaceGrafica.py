@@ -1,8 +1,10 @@
+import json
 import tkinter as tk
-from tkinter import ttk
+from tkinter import END, ttk
 from tkinter import messagebox
 from tkcalendar import Calendar
 from datetime import datetime, timedelta
+import CancelarEmLote
 
 class CancelClassesApp:
     def __init__(self, root):
@@ -39,9 +41,10 @@ class CancelClassesApp:
         self.start_repeat_cal = Calendar(self.repeating_tab, selectmode='day')
         self.start_repeat_cal.grid(column=1, row=0, padx=10, pady=10)
         
-        ttk.Label(self.repeating_tab, text="Quantidade de Dias").grid(column=0, row=1, padx=10, pady=10)
+        ttk.Label(self.repeating_tab, text="Dias entre aulas").grid(column=0, row=1, padx=10, pady=10)
         self.days_entry = ttk.Entry(self.repeating_tab)
         self.days_entry.grid(column=1, row=1, padx=10, pady=10)
+        self.days_entry.insert(END, '7')
         
         ttk.Label(self.repeating_tab, text="Número de Repetições").grid(column=0, row=2, padx=10, pady=10)
         self.repetitions_entry = ttk.Entry(self.repeating_tab)
@@ -76,8 +79,33 @@ class CancelClassesApp:
         while current_date <= end_date:
             dates.append(current_date.strftime('%d/%m/%Y'))
             current_date += timedelta(days=1)
-        
-        messagebox.showinfo("Datas Canceladas", "\n".join(dates))
+
+        allDates = ""
+
+        # Itera sobre a lista de datas, com um passo de 5 em 5
+        for i in range(0, len(dates), 5):
+            # Junta as próximas 5 datas usando ' ' como separador e adiciona uma quebra de linha no final
+            allDates += ' '.join(dates[i:i+5]) + "\n"
+
+        ret = messagebox.askokcancel("Confirma as Datas?", allDates)
+
+        if ret: 
+            #repassando as datas para a classe CancelarEmLote
+            self.initSigaa(dates)
+        else:
+            # parar a execução
+            print("Operação cancelada pelo usuário!")
+            return
+
+    def initSigaa(self,dates):
+        try:
+            with open("config.json", "r", encoding="utf-8") as config_file:
+                config = json.load(config_file)
+                print("Configurações carregadas com sucesso!")
+                CancelarEmLote.extrair_notas_sigaa(config, dates)
+            print("Aulas canceladas no SIGAA com sucesso!")
+        except Exception as e:
+            print("Erro na operação:", e)
     
     def cancel_by_repeating(self):
         start_date_str = self.clean_date_string(self.start_repeat_cal.get_date())
@@ -102,9 +130,25 @@ class CancelClassesApp:
         for _ in range(repetitions + 1):
             dates.append(current_date.strftime('%d/%m/%Y'))
             current_date += timedelta(days=days_interval)
-        
-        messagebox.showinfo("Datas Canceladas", "\n".join(dates))
 
+        allDates = ""
+
+        # Itera sobre a lista de datas, com um passo de 5 em 5
+        for i in range(0, len(dates), 5):
+            # Junta as próximas 5 datas usando ' ' como separador e adiciona uma quebra de linha no final
+            allDates += ' '.join(dates[i:i+5]) + "\n"
+
+        ret = messagebox.askokcancel("Confirma as Datas?", allDates)
+
+        if ret: 
+            #repassando as datas para a classe CancelarEmLote
+            self.initSigaa(dates)
+        else:
+            # parar a execução
+            print("Operação cancelada pelo usuário")
+            return
+
+# Verifica se o arquivo está sendo executado diretamente
 if __name__ == "__main__":
     root = tk.Tk()
     app = CancelClassesApp(root)
