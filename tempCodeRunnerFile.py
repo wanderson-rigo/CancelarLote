@@ -1,1 +1,1 @@
-ret
+self.tab_control = ttk.Notebook(root)
