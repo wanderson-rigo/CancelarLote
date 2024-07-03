@@ -5,6 +5,7 @@ from tkinter import messagebox
 from tkcalendar import Calendar
 from datetime import datetime, timedelta
 import CancelarEmLote
+import babel.numbers
 
 
 class CancelClassesApp:
