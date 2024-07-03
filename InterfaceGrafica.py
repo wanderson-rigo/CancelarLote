@@ -15,9 +15,6 @@ class CancelClassesApp:
         #Cria o estilo
         style = ttk.Style()
 
-        # Verifica os temas disponíveis
-        print(style.theme_names())
-
         # Define o tema (opcional, escolha um tema disponível)
         style.theme_use('default')
 
