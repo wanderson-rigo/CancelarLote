@@ -74,12 +74,12 @@ class CancelClassesApp:
 
         ttk.Label(self.interval_tab, text="Data Inicial").grid(
             column=0, row=0, padx=10, pady=10)
-        self.start_cal = Calendar(self.interval_tab, selectmode='day')
+        self.start_cal = Calendar(self.interval_tab, selectmode='day', locale='pt_BR')
         self.start_cal.grid(column=1, row=0, padx=10, pady=10)
 
         ttk.Label(self.interval_tab, text="Data Final").grid(
             column=0, row=1, padx=10, pady=10)
-        self.end_cal = Calendar(self.interval_tab, selectmode='day')
+        self.end_cal = Calendar(self.interval_tab, selectmode='day', locale='pt_BR')
         self.end_cal.grid(column=1, row=1, padx=10, pady=10)
 
         self.interval_button = ttk.Button(
@@ -92,7 +92,7 @@ class CancelClassesApp:
 
         ttk.Label(self.repeating_tab, text="Data Inicial").grid(
             column=0, row=0, padx=10, pady=10)
-        self.start_repeat_cal = Calendar(self.repeating_tab, selectmode='day')
+        self.start_repeat_cal = Calendar(self.repeating_tab, selectmode='day', locale='pt_BR')
         self.start_repeat_cal.grid(column=1, row=0, padx=10, pady=10)
 
         ttk.Label(self.repeating_tab, text="Dias entre aulas").grid(
