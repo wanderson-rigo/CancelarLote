@@ -5,3 +5,5 @@ InterfaceGrafica.spec
 .gitignore
 tempCodeRunnerFile.py
 InterfaceGrafica.spec
+__pycache__
+.gitignore
