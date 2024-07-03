@@ -5,8 +5,11 @@ from tkinter import messagebox
 from tkcalendar import Calendar
 from datetime import datetime, timedelta
 import CancelarEmLote
-import babel.numbers
+import logging
 
+# Configura o logging
+logging.basicConfig(filename='cancelar_aulas.log', level=logging.ERROR,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
 
 class CancelClassesApp:
     def __init__(self, root):
@@ -28,7 +31,7 @@ class CancelClassesApp:
         cor = '#B0C4DE'
         style.map('TNotebook.Tab', background=[('selected', cor)])
 
-        self.tab_control = ttk.Notebook(root,style='TNotebook')
+        self.tab_control = ttk.Notebook(root, style='TNotebook')
 
         self.create_interval_tab()
         self.create_repeating_tab()
@@ -108,8 +111,14 @@ class CancelClassesApp:
         self.repeating_button.grid(column=0, row=3, columnspan=2, pady=10)
 
     def clean_date_string(self, date_str):
-        # Remove caracteres extras ao redor da data
-        return date_str.strip()
+        # Normaliza a data para o formato %d/%m/%Y
+        try:
+            # Tenta primeiro converter do formato %m/%d/%y para %d/%m/%Y
+            normalized_date = datetime.strptime(date_str, '%m/%d/%y').strftime('%d/%m/%Y')
+        except ValueError:
+            # Se falhar, tenta converter do formato %d/%m/%Y diretamente
+            normalized_date = date_str
+        return normalized_date.strip()
 
     def cancel_by_interval(self):
         start_date_str = self.clean_date_string(self.start_cal.get_date())
@@ -120,7 +129,7 @@ class CancelClassesApp:
             end_date = datetime.strptime(end_date_str, '%d/%m/%Y')
 
         except ValueError as e:
-            print(f"Erro ao converter data: {e}")
+            logging.error(f"Erro ao converter data: {e}")
             messagebox.showerror("Erro", "Por favor, insira uma data válida.")
             return
 
@@ -160,11 +169,11 @@ class CancelClassesApp:
                 CancelarEmLote.extrair_notas_sigaa(config, dates)
             print("Aulas canceladas no SIGAA com sucesso!")
         except Exception as e:
-            print("Erro na operação:", e)
+            logging.error(f"Erro na operação: {e}")
+            messagebox.showerror("Erro", f"Erro na operação: {e}")
 
     def cancel_by_repeating(self):
-        start_date_str = self.clean_date_string(
-            self.start_repeat_cal.get_date())
+        start_date_str = self.clean_date_string(self.start_repeat_cal.get_date())
         days_interval_str = self.days_entry.get()
         repetitions_str = self.repetitions_entry.get()
 
@@ -177,7 +186,7 @@ class CancelClassesApp:
                 raise ValueError("Valores inválidos")
 
         except ValueError as e:
-            print(f"Erro ao converter data ou valores: {e}")
+            logging.error(f"Erro ao converter data ou valores: {e}")
             messagebox.showerror(
                 "Erro", "Por favor, insira valores válidos. Quantidade de dias deve ser maior que zero e repetições não pode ser negativo.")
             return
