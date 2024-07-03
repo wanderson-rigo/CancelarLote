@@ -177,8 +177,8 @@ for dia in diasLetivos:
     elemento.click()
 '''
 
-def pedir_senha():
-        senha = simpledialog.askstring("Senha", "Digite sua senha do SIGAA:", initialvalue="", show='*')
+def pedir_senha(USERNAME):
+        senha = simpledialog.askstring("Senha do SIGAA", "Ei " + USERNAME + ", digite sua senha do SIGAA:", initialvalue="", show='*')
         return senha
 
 def extrair_notas_sigaa(config, datasSelecionadas):
@@ -189,7 +189,7 @@ def extrair_notas_sigaa(config, datasSelecionadas):
 
     #se não tem password, deve pedir
     if not PASSWORD:
-        PASSWORD = pedir_senha()
+        PASSWORD = pedir_senha(USERNAME)
 
 
     # Inicialize o driver do navegador
