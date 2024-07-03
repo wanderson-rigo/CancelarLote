@@ -4,7 +4,7 @@ from tkinter import END, ttk
 from tkinter import messagebox
 from tkcalendar import Calendar
 from datetime import datetime, timedelta
-import CancelarEmLote
+import CancelarAulas
 import logging
 
 # Configura o logging
@@ -166,7 +166,7 @@ class CancelClassesApp:
             with open("config.json", "r", encoding="utf-8") as config_file:
                 config = json.load(config_file)
                 print("Configurações carregadas com sucesso!")
-                CancelarEmLote.extrair_notas_sigaa(config, dates)
+                CancelarAulas.extrair_notas_sigaa(config, dates)
             print("Aulas canceladas no SIGAA com sucesso!")
         except Exception as e:
             logging.error(f"Erro na operação: {e}")
