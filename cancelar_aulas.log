@@ -1,0 +1,18 @@
+2024-07-04 09:19:19,444 - ERROR - Erro ao converter data ou valores: invalid literal for int() with base 10: ''
+2024-07-04 09:19:31,633 - ERROR - Erro ao converter data ou valores: invalid literal for int() with base 10: ''
+2024-07-04 16:59:25,019 - ERROR - Erro na operação: Message: Unable to locate element: //p[contains(text(), 'Cadastrar Aula Extra')]; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+Stacktrace:
+RemoteError@chrome://remote/content/shared/RemoteError.sys.mjs:8:8
+WebDriverError@chrome://remote/content/shared/webdriver/Errors.sys.mjs:193:5
+NoSuchElementError@chrome://remote/content/shared/webdriver/Errors.sys.mjs:511:5
+dom.find/</<@chrome://remote/content/shared/DOM.sys.mjs:136:16
+
+2024-07-04 17:00:45,687 - ERROR - Erro na operação: Message: Unable to locate element: //p[contains(text(), 'Cadastrar Aula Extra')]; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+Stacktrace:
+RemoteError@chrome://remote/content/shared/RemoteError.sys.mjs:8:8
+WebDriverError@chrome://remote/content/shared/webdriver/Errors.sys.mjs:193:5
+NoSuchElementError@chrome://remote/content/shared/webdriver/Errors.sys.mjs:511:5
+dom.find/</<@chrome://remote/content/shared/DOM.sys.mjs:136:16
+
+2024-07-04 17:04:06,014 - ERROR - Erro na operação: list index out of range
+2024-07-04 17:08:56,152 - ERROR - Erro na operação: '<' not supported between instances of 'list' and 'int'

@@ -5,6 +5,7 @@ from tkinter import messagebox
 from tkcalendar import Calendar
 from datetime import datetime, timedelta
 import CancelarAulas
+import RegistrarAulasExtras
 import logging
 
 # Configura o logging
@@ -35,10 +36,41 @@ class CancelClassesApp:
 
         self.create_interval_tab()
         self.create_repeating_tab()
+        self.create_extras_tab()
         self.create_help_tab()
         self.create_about_tab()
 
         self.tab_control.pack(expand=1, fill='both')
+
+    def create_extras_tab(self):
+        self.extras_tab = ttk.Frame(self.tab_control)
+        self.tab_control.add(self.extras_tab, text='Lançar Aulas Extras')
+
+        ttk.Label(self.extras_tab, text="Data Inicial").grid(
+            column=0, row=0, padx=10, pady=10)
+        self.start_extras_cal = Calendar(self.extras_tab, selectmode='day', locale='pt_BR')
+        self.start_extras_cal.grid(column=1, row=0, padx=10, pady=10)
+
+        ttk.Label(self.extras_tab, text="Dias entre aulas").grid(
+            column=0, row=1, padx=10, pady=10)
+        self.days_extras_entry = ttk.Entry(self.extras_tab)
+        self.days_extras_entry.grid(column=1, row=1, padx=10, pady=10)
+        self.days_extras_entry.insert(END, '7')
+
+        ttk.Label(self.extras_tab, text="Número de Repetições").grid(
+            column=0, row=2, padx=10, pady=10)
+        self.repetitions_extras_entry = ttk.Entry(self.extras_tab)
+        self.repetitions_extras_entry.grid(column=1, row=2, padx=10, pady=10)
+
+        ttk.Label(self.extras_tab, text="Aulas por Encontro").grid(
+            column=0, row=3, padx=10, pady=10)
+        self.aulas_por_encontro_entry = ttk.Entry(self.extras_tab)
+        self.aulas_por_encontro_entry.grid(column=1, row=3, padx=10, pady=10)
+        self.aulas_por_encontro_entry.insert(END, '1')
+
+        self.extras_button = ttk.Button(
+            self.extras_tab, text="Lançar Aulas Extras", command=self.registry_by_extras)
+        self.extras_button.grid(column=0, row=4, columnspan=2, pady=10)
 
     def create_about_tab(self):
         self.about_tab = ttk.Frame(self.tab_control)
@@ -110,6 +142,49 @@ class CancelClassesApp:
             self.repeating_tab, text="Cancelar Aulas", command=self.cancel_by_repeating)
         self.repeating_button.grid(column=0, row=3, columnspan=2, pady=10)
 
+    def registry_by_extras(self):
+        start_date_str = self.clean_date_string(self.start_extras_cal.get_date())
+        days_interval_str = self.days_extras_entry.get()
+        repetitions_str = self.repetitions_extras_entry.get()
+        aulas_por_encontro_str = self.aulas_por_encontro_entry.get()
+
+        try:
+            start_date = datetime.strptime(start_date_str, '%d/%m/%Y')
+            days_interval = int(days_interval_str)
+            repetitions = int(repetitions_str)
+
+            if days_interval <= 0 or repetitions < 0:
+                raise ValueError("Valores inválidos")
+
+        except ValueError as e:
+            logging.error(f"Erro ao converter data ou valores: {e}")
+            messagebox.showerror(
+                "Erro", "Por favor, insira valores válidos. Quantidade de dias deve ser maior que zero e repetições não pode ser negativo.")
+            return
+
+        dates = []
+        current_date = start_date
+        for _ in range(repetitions + 1):
+            dates.append(current_date.strftime('%d/%m/%Y'))
+            current_date += timedelta(days=days_interval)
+
+        allDates = ""
+
+        # Itera sobre a lista de datas, com um passo de 5 em 5
+        for i in range(0, len(dates), 5):
+            # Junta as próximas 5 datas usando ' ' como separador e adiciona uma quebra de linha no final
+            allDates += ' '.join(dates[i:i+5]) + "\n"
+
+        ret = messagebox.askokcancel("Confirma as Datas?", allDates)
+
+        if ret:
+            # repassando as datas para a classe RegistrarAulasExtras
+            self.initSigaaRegistrarExtras(dates,aulas_por_encontro_str)
+        else:
+            # parar a execução
+            print("Operação cancelada pelo usuário")
+            return
+
     def clean_date_string(self, date_str):
         # Normaliza a data para o formato %d/%m/%Y
         try:
@@ -168,6 +243,17 @@ class CancelClassesApp:
                 print("Configurações carregadas com sucesso!")
                 CancelarAulas.extrair_notas_sigaa(config, dates)
             print("Aulas canceladas no SIGAA com sucesso!")
+        except Exception as e:
+            logging.error(f"Erro na operação: {e}")
+            messagebox.showerror("Erro", f"Erro na operação: {e}")
+
+    def initSigaaRegistrarExtras(self, dates, aulas_por_encontro_str):
+        try:
+            with open("config.json", "r", encoding="utf-8") as config_file:
+                config = json.load(config_file)
+                print("Configurações carregadas com sucesso!")
+                RegistrarAulasExtras.registrarAulasExtras(config, dates, aulas_por_encontro_str)
+            print("Aulas extras inseridas no SIGAA com sucesso!")
         except Exception as e:
             logging.error(f"Erro na operação: {e}")
             messagebox.showerror("Erro", f"Erro na operação: {e}")
